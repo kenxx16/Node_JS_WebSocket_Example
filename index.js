@@ -4,19 +4,22 @@ const url = require('url');
 const fs = require('fs');
 
 
-
-fs.readFile('assets/index.html', function(err, data) {
+fs.readFile('assets/index2.html', function(err, data) {
 	if (err){
 		throw err;
 	}
 	htmlFile = data;
 });
-fs.readFile('assets/style.css', function(err, data) {
+
+fs.readFile('assets/css/bootstrap.css', function(err, data) {
 	if (err){
 		throw err;
 	}
 	cssFile = data;
 });
+
+//------------------------------------------------------------------
+
 fs.readFile('assets/script.js', function(err, data) {
 	if (err){
 		throw err;
@@ -24,20 +27,82 @@ fs.readFile('assets/script.js', function(err, data) {
 	scriptFile = data;
 });
 
+fs.readFile('assets/jquery-3.5.1.min.js', function(err, data) {
+	if (err){
+		throw err;
+	}
+	scriptFile += data;
+});
+
+fs.readFile('assets/js/bootstrap.js', function(err, data) {
+	if (err){
+		throw err;
+	}
+	scriptFile += data;
+});
+
+fs.readFile('assets/code/highcharts.js', function(err, data) {
+	if (err){
+		throw err;
+	}
+	scriptFileHC = data;
+});
+
+fs.readFile('assets/code/modules/heatmap.src.js', function(err, data) {
+	if (err){
+		throw err;
+	}
+	scriptFileHeat = data;
+});
+
+fs.readFile('assets/js/ampChart.js', function(err, data) {
+	if (err){
+		throw err;
+	}
+	scriptFileAmp = data;
+});
+
+fs.readFile('assets/js/getFoto.js', function(err, data) {
+	if (err){
+		throw err;
+	}
+	scriptFileFoto = data;
+});
+
 
 const server = http.createServer(function (req, res) {
-
+	console.log(req.url);
 
 	switch (req.url) {
-
-		case "/style.css" :
-			res.writeHead(200, {"Content-Type": "text/css"});
-			res.write(cssFile);
-			res.end();
-			break;
 		case "/script.js" :
 			res.writeHead(200, {"Content-Type": "text/javascript"});
 			res.write(scriptFile);
+			res.end();
+			break;
+
+		case "/code/highcharts.js" :
+			res.writeHead(200, {"Content-Type": "text/javascript"});
+			res.write(scriptFileHC);
+			res.end();
+			break;
+		case "/code/modules/heatmap.src.js" :
+			res.writeHead(200, {"Content-Type": "text/javascript"});
+			res.write(scriptFileHeat);
+			res.end();
+			break;
+		case "/js/ampChart.js" :
+			res.writeHead(200, {"Content-Type": "text/javascript"});
+			res.write(scriptFileAmp);
+			res.end();
+			break;
+		case "/js/getFoto.js" :
+			res.writeHead(200, {"Content-Type": "text/javascript"});
+			res.write(scriptFileFoto);
+			res.end();
+			break;
+		case "/css/bootstrap.css" :
+			res.writeHead(200, {"Content-Type": "text/css"});
+			res.write(cssFile);
 			res.end();
 			break;
 		default:
@@ -56,7 +121,7 @@ const wss1 = new WebSocket.Server({ noServer: true });
 var clients = {};
 wss1.on('connection', function connection(ws) {
 
-	console.log(ws)
+	// console.log(ws)
 	// ...
 	var id = Math.random();
 	clients[id] = ws;
@@ -69,6 +134,7 @@ wss1.on('connection', function connection(ws) {
 			clients[key].send(message);
 		}
 	});
+
 
 	ws.on('close', function() {
 		console.log('соединение закрыто ' + id);
@@ -90,5 +156,7 @@ server.on('upgrade', function upgrade(request, socket, head) {
 		socket.destroy();
 	}
 });
+
+// child_process.execFile('tcp_client/Release/ASOPS_tcpclient.exe -offm_w capture151115.pscan ws://localhost:3000/data 1000');
 
 server.listen(3000);
